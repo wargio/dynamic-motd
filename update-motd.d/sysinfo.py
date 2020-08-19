@@ -53,24 +53,12 @@ def proc_mount():
       statfs = os.statvfs(a[1])
       perc = 100 - percentage(statfs.f_bavail, statfs.f_blocks)
       gb = statfs.f_bsize*statfs.f_blocks/1024./1024/1024
-      items[a[1]] = "{:.1f}% of {:.2f}GB".format(perc, gb)
-  return items
-
-def inode_proc_mount():
-  items = {}
-  for m in open('/proc/mounts').readlines():
-    a = m.split()
-    if a[0].find('/dev/') == 0:
-      statfs = os.statvfs(a[1])
-      perc = 100 - percentage(statfs.f_ffree, statfs.f_files)
-      total = statfs.f_files
-      items[a[1]] = "{:.1f}% of {:.2f}".format(perc, total)
+      items[a[1]] = "{:.1f}% of {:.2f} GB".format(perc, gb)
   return items
 
 loadav    = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob('/proc/[0-9]*'))
 statfs    = proc_mount()
-iStatfs   = inode_proc_mount()
 users     = utmp_count()
 meminfo   = proc_meminfo()
 memperc   = "{:.2f}%".format(100 - percentage(meminfo['MemAvailable:'], (meminfo['MemTotal:'] or 1)))
@@ -85,11 +73,7 @@ print ("  Swap usage:   {}".format(swapperc))
 
 print ("  Disk Usage:")
 for k in sorted(statfs.keys()):
-  print ("    Usage of {:<24s}: {:<20s}".format(k, statfs[k]))
-
-print ("  Inode Usage:")
-for l in sorted(iStatfs.keys()):
-  print ("    Usage of {:<24s}: {:<20s}".format(l, iStatfs[l]))
+  print ("    {:<24s} {}".format(statfs[k], k))
 
 if users > 0:
     a = utmp.UtmpRecord()
@@ -98,7 +82,7 @@ if users > 0:
 
     for b in a: # example of using an iterator
         if b.ut_type == utmp.USER_PROCESS:
-            print ("  \033[1;31m{:<10s}\033[m from {:<25s} at {:<20s}".format(b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
+            print ("    \033[1;31m{:<10s}\033[m from {:<25s} at {:<20s}".format(b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
     a.endutent()
 
 sys.exit(0)
