@@ -14,25 +14,18 @@ Example:
 
   Debian GNU/Linux 8.4 (jessie) (kernel 3.16.0-4-amd64)
 
+  System information as of Wed Aug 19 15:37:12 2020
 
-  System information as of Fri Apr 22 10:02:57 2016
-
-  System load:  2.74                 Processes:           167
-  Memory usage: 98%                  Users logged in:     1
-  Swap usage:   31%
+  System load:  1.81                 Processes:           262
+  Memory usage: 67.63%               Users logged in:     1
+  Swap usage:   10.50%
   Disk Usage:
-    Usage of /                       : 37.0% of 19.18GB
-    Usage of /boot                   : 36.6% of 0.11GB
-    Usage of /home                   : 11.1% of 501.60GB
-  Inode Usage:
-    Usage of /                       : 12.7% of 1286144
-    Usage of /boot                   : 1.1% of 31232
-    Usage of /home                   : 0.1% of 33406976
+    85.4 % of   452.21 GB /
+    14.0 % of     0.50 GB /boot
 
   Logged in users:
   user       from laptop.example.org        at Fri Apr 22 09:09:09 2016
 
-No mail.
 Last login: Fri Apr 22 09:23:01 2016 from laptop.example.org
 ```
 
@@ -43,7 +36,7 @@ Last login: Fri Apr 22 09:23:01 2016 from laptop.example.org
 You need to install some packages:
 
 ```
-apt-get install figlet lsb-release python-utmp bc
+apt-get install figlet lsb-release python3-utmp
 ```
 
 Optionnally, you can install `needrestart` which is used to show a message if your server need a reboot (main reason (and the only one I know): you have upgraded your kernel).
@@ -55,9 +48,11 @@ You can optionnally install `debian-goodies` which provides `checkrestart`, whic
 ## Installation
 
 ```
-cp -r update-motd.d/ /etc
-rm /etc/motd
-ln -s /var/run/motd /etc/motd
+cp -rv update-motd.d/ /etc/
+chmod -v 755 /etc/update-motd.d/
+chmod -v 644 /etc/update-motd.d/colors /etc/update-motd.d/sysinfo.py
+rm -rfv /etc/motd
+ln -sv /var/run/motd /etc/motd
 ```
 
 ## Salt
