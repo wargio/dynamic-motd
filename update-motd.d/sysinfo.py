@@ -67,8 +67,8 @@ swapperc  = "{:.2f}%".format(100 - percentage(meminfo['SwapFree:'], (meminfo['Sw
 if meminfo['SwapTotal:'] == 0: swapperc = '---'
 
 print ("  System information as of {}\n".format(time.asctime()))
-print ("  System load:  {:<5.2f}                Processes:           {}".format(loadav, processes))
-print ("  Memory usage: {:<4s}               Users logged in:     {}".format(memperc, users))
+print ("  System load:  {:<8.2f}             Processes:           {}".format(loadav, processes))
+print ("  Memory usage: {:<8s}             Users logged in:     {}".format(memperc, users))
 print ("  Swap usage:   {}".format(swapperc))
 
 print ("  Disk Usage:")
