@@ -53,7 +53,7 @@ def proc_mount():
       statfs = os.statvfs(a[1])
       perc = 100 - percentage(statfs.f_bavail, statfs.f_blocks)
       gb = statfs.f_bsize*statfs.f_blocks/1024./1024/1024
-      items[a[1]] = "{:4.1f} % of {:6.2f} GB".format(perc, gb)
+      items[a[1]] = "{:4.1f} % of {:8.2f} GB".format(perc, gb)
   return items
 
 loadav    = float(open("/proc/loadavg").read().split()[1])
@@ -73,7 +73,7 @@ print ("  Swap usage:   {}".format(swapperc))
 
 print ("  Disk Usage:")
 for k in sorted(statfs.keys()):
-  print ("    {:<24s} {}".format(statfs[k], k))
+  print ("    {} {}".format(statfs[k], k))
 
 if users > 0:
     a = utmp.UtmpRecord()
