@@ -53,7 +53,7 @@ def proc_mount():
       statfs = os.statvfs(a[1])
       perc = 100 - percentage(statfs.f_bavail, statfs.f_blocks)
       gb = statfs.f_bsize*statfs.f_blocks/1024./1024/1024
-      items[a[1]] = "{:3.1f} % of {:.2f} GB".format(perc, gb)
+      items[a[1]] = "{:4.1f} % of {:6.2f} GB".format(perc, gb)
   return items
 
 loadav    = float(open("/proc/loadavg").read().split()[1])
