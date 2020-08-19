@@ -11,3 +11,5 @@ if [ $(echo "`cut -f1 -d ' ' /proc/loadavg` < $threshold" | bc) -eq 1 ]; then
 else
     echo " System information disabled due to load higher than $threshold"
 fi
+
+echo ""
