@@ -24,6 +24,12 @@ import utmp
 
 _version_ = '1.2'
 
+def percentage(x, total):
+  if total < 1:
+    return 0;
+  p = 100. * (x / total)
+  return p
+
 def utmp_count():
   u = utmp.UtmpRecord()
   users = 0
@@ -45,9 +51,9 @@ def proc_mount():
     a = m.split()
     if a[0].find('/dev/') == 0:
       statfs = os.statvfs(a[1])
-      perc = 100-100.*statfs.f_bavail/statfs.f_blocks
+      perc = 100 - percentage(statfs.f_bavail, statfs.f_blocks)
       gb = statfs.f_bsize*statfs.f_blocks/1024./1024/1024
-      items[a[1]] = "%.1f%% of %.2fGB" % (perc, gb)
+      items[a[1]] = "{:.1f}% of {:.2f}GB".format(perc, gb)
   return items
 
 def inode_proc_mount():
@@ -56,34 +62,34 @@ def inode_proc_mount():
     a = m.split()
     if a[0].find('/dev/') == 0:
       statfs = os.statvfs(a[1])
-      perc = 100-100.*statfs.f_ffree/statfs.f_files
-      iTotal = statfs.f_files
-      items[a[1]] = "%.1f%% of %.2d" % (perc, iTotal)
+      perc = 100 - percentage(statfs.f_ffree, statfs.f_files)
+      total = statfs.f_files
+      items[a[1]] = "{:.1f}% of {:.2f}".format(perc, total)
   return items
 
-loadav = float(open("/proc/loadavg").read().split()[1])
+loadav    = float(open("/proc/loadavg").read().split()[1])
 processes = len(glob.glob('/proc/[0-9]*'))
-statfs = proc_mount()
-iStatfs = inode_proc_mount()
-users = utmp_count()
-meminfo = proc_meminfo()
-memperc = "%d%%" % (100-100.*meminfo['MemAvailable:']/(meminfo['MemTotal:'] or 1))
-swapperc = "%d%%" % (100-100.*meminfo['SwapFree:']/(meminfo['SwapTotal:'] or 1))
+statfs    = proc_mount()
+iStatfs   = inode_proc_mount()
+users     = utmp_count()
+meminfo   = proc_meminfo()
+memperc   = "{:.2f}%".format(100 - percentage(meminfo['MemAvailable:'], (meminfo['MemTotal:'] or 1)))
+swapperc  = "{:.2f}%".format(100 - percentage(meminfo['SwapFree:'], (meminfo['SwapTotal:'] or 1)))
 
 if meminfo['SwapTotal:'] == 0: swapperc = '---'
 
-print ("  System information as of %s\n" % time.asctime())
-print ("  System load:  %-5.2f                Processes:           %d" % (loadav, processes))
-print ("  Memory usage: %-4s                 Users logged in:     %d" % (memperc, users))
-print ("  Swap usage:   %s" % (swapperc))
+print ("  System information as of {}\n".format(time.asctime()))
+print ("  System load:  {:<5.2f}                Processes:           {}".format(loadav, processes))
+print ("  Memory usage: {:<4s}               Users logged in:     {}".format(memperc, users))
+print ("  Swap usage:   {}".format(swapperc))
 
 print ("  Disk Usage:")
 for k in sorted(statfs.keys()):
-  print ("    Usage of %-24s: %-20s" % (k, statfs[k]))
+  print ("    Usage of {:<24s}: {:<20s}".format(k, statfs[k]))
 
 print ("  Inode Usage:")
 for l in sorted(iStatfs.keys()):
-  print ("    Usage of %-24s: %-20s" % (l, iStatfs[l]))
+  print ("    Usage of {:<24s}: {:<20s}".format(l, iStatfs[l]))
 
 if users > 0:
     a = utmp.UtmpRecord()
@@ -92,8 +98,7 @@ if users > 0:
 
     for b in a: # example of using an iterator
         if b.ut_type == utmp.USER_PROCESS:
-            print ("  \033[1;31m%-10s\033[m from %-25s at %-20s" % \
-            (b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
+            print ("  \033[1;31m{:<10s}\033[m from {:<25s} at {:<20s}".format(b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
     a.endutent()
 
 sys.exit(0)
