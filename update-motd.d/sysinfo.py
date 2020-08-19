@@ -80,9 +80,9 @@ if users > 0:
 
     print ("\n  Logged in users:")
 
-    for b in a: # example of using an iterator
+    for b in a:
         if b.ut_type == utmp.USER_PROCESS:
-            print ("    \033[1;31m{:<10s}\033[m from {:<25s} at {:<20s}".format(b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
+            print ("    {:<12s} from {:<25s} at {:<20s}".format(b.ut_user, b.ut_host, time.ctime(b.ut_tv[0])))
     a.endutent()
 
 sys.exit(0)
